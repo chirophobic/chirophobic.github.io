@@ -3,6 +3,10 @@ html, body {
     margin: 0;
 }
 
+#timer {
+    font-family: monospace;
+}
+
 input {
     width: 50px;
     text-align: right;

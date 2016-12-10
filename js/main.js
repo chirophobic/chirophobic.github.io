@@ -3,11 +3,28 @@
  */
 
 window.onload = function () {
+    // Reset the table
     reset();
 
+    // Callbacks/Event handlers
     document.querySelector("#reset").addEventListener("click", reset);
     document.querySelector("#clear").addEventListener("click", clear);
     document.querySelector("#submit").addEventListener("click", checkAnswers);
+
+    // Setup the timer
+    var timerOuput = document.querySelector("#timer");
+    var startTime = getTimeSeconds();
+    setInterval(function () {
+        var currentTime = getTimeSeconds();
+        var difference = currentTime - startTime;
+
+        var minutes = Math.floor(difference / 60);
+        var seconds = difference % 60;
+
+
+
+        timerOuput.textContent = pad(minutes, "00") + ":" + pad(seconds, "00");
+    }, 1000);
 };
 
 function clear() {
@@ -110,4 +127,23 @@ function list(min, max) {
         numbers.push(i);
     }
     return numbers;
+}
+
+/**
+ * Get the current time in seconds
+ * @returns {Number}
+ */
+function getTimeSeconds() {
+    return Math.floor(new Date().getTime() / 1000);
+}
+
+/**
+ * Pad the given value with the given padding
+ * @param {String|Number} value
+ * @param {String} padding
+ * @returns {string}
+ */
+function pad(value, padding) {
+    var str = "" + value;
+    return padding.substring(0, padding.length - str.length) + str;
 }
