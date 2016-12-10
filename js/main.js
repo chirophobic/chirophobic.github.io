@@ -7,13 +7,14 @@ window.onload = function () {
 
     document.querySelector("#reset").addEventListener("click", reset);
     document.querySelector("#clear").addEventListener("click", clear);
-    document.querySelector("#submit").addEventListener("click", reset);
+    document.querySelector("#submit").addEventListener("click", checkAnswers);
 };
 
 function clear() {
-    var input = document.querySelectorAll("table input");
-    input.forEach(function (elem) {
-        elem.value = "";
+    var inputs = document.querySelectorAll("table input");
+    inputs.forEach(function (input) {
+        input.value = "";
+        input.classList.remove("incorrect", "correct");
     });
 }
 
@@ -23,6 +24,18 @@ function reset() {
     var html = "<table><tbody>" + board + "</tbody></table>";
     var output = document.querySelector("#multiplication-table");
     output.innerHTML = html;
+}
+
+function checkAnswers() {
+    var inputs = document.querySelectorAll("table input");
+    inputs.forEach(function (input) {
+        var rowNum = parseInt(input.getAttribute("row-num"));
+        var columnNum = parseInt(input.getAttribute("column-num"));
+        var userAnswer = parseInt(input.value);
+        var isCorrect = userAnswer === rowNum * columnNum;
+
+        input.classList.add(isCorrect ? "correct" : "incorrect");
+    });
 }
 
 /**
@@ -37,12 +50,12 @@ function generateBoard() {
         return "<td>" + value.toString() + "</td>";
     };
 
-    board += "<tr><td></td>" + rows.map(wrap).join("") + "</tr>";
+    board += "<tr><td></td>" + columns.map(wrap).join("") + "</tr>";
 
-    board += columns.map(function (number) {
+    board += rows.map(function (number) {
         var inputs = "";
-        for (var i = 1; i <= 12; i++) {
-            inputs += wrap("<input />");
+        for (var i = 0; i < 12; i++) {
+            inputs += wrap("<input row-num='" + number + "' column-num='" + columns[i] + "' />");
         }
 
         return "<tr>" + wrap(number) + inputs + "</tr>"
