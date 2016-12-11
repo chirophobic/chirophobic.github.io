@@ -3,29 +3,27 @@
  */
 
 window.onload = function () {
-    // Reset the table
-    reset();
-
     // Callbacks/Event handlers
     document.querySelector("#reset").addEventListener("click", reset);
     document.querySelector("#clear").addEventListener("click", clear);
     document.querySelector("#submit").addEventListener("click", checkAnswers);
 
     // Setup the timer
-    var timerOuput = document.querySelector("#timer");
-    var startTime = getTimeSeconds();
-    setInterval(function () {
-        var currentTime = getTimeSeconds();
-        var difference = currentTime - startTime;
+    window._timerOuput = document.querySelector("#timer");
 
-        var minutes = Math.floor(difference / 60);
-        var seconds = difference % 60;
-
-
-
-        timerOuput.textContent = pad(minutes, "00") + ":" + pad(seconds, "00");
-    }, 1000);
+    // Reset the table
+    reset();
 };
+
+function updateTimer() {
+    var currentTime = getTimeSeconds();
+    var difference = currentTime - window._startTime;
+
+    var minutes = Math.floor(difference / 60);
+    var seconds = difference % 60;
+
+    window._timerOuput.textContent = pad(minutes, "00") + ":" + pad(seconds, "00");
+}
 
 function clear() {
     var inputs = document.querySelectorAll("table input");
@@ -41,9 +39,18 @@ function reset() {
     var html = "<table><tbody>" + board + "</tbody></table>";
     var output = document.querySelector("#multiplication-table");
     output.innerHTML = html;
+    window._startTime = getTimeSeconds();
+
+    window._startTime = getTimeSeconds();
+    if (typeof window._timer !== "undefined") {
+        clearInterval(window._timer);
+    }
+    window._timer = setInterval(updateTimer, 1000);
+    updateTimer();
 }
 
 function checkAnswers() {
+    var allCorrect = true;
     var inputs = document.querySelectorAll("table input");
     inputs.forEach(function (input) {
         var rowNum = parseInt(input.getAttribute("row-num"));
@@ -51,8 +58,13 @@ function checkAnswers() {
         var userAnswer = parseInt(input.value);
         var isCorrect = userAnswer === rowNum * columnNum;
 
+        allCorrect = allCorrect && isCorrect;
         input.classList.add(isCorrect ? "correct" : "incorrect");
     });
+
+    if (allCorrect) {
+        clearInterval(window._timer);
+    }
 }
 
 /**
